@@ -1,0 +1,8 @@
+{
+  "$id": "./C_SERVICES.json#",
+  "enum": [
+    "Bot",
+    "Sso",
+    "User"
+  ]
+}

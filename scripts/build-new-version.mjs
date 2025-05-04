@@ -23,6 +23,51 @@ function run() {
   const files = fs.readdirSync('./configs/service-schema');
 
   generateTsTypes(files);
+  generateSchema(files);
+
+  execSync(
+    `aws s3 sync ./configs/schema/ ${AWS_S3_BUCKET}/configs/schema/ --profile ${AWS_PROFILE}`,
+  );
+}
+
+function generateSchema(files) {
+  const baseUrl = process.env.BASE_SCHEMA_URL;
+  const base = {
+    $id: './base.json#',
+    type: 'object',
+    oneOf: [],
+    required: ['service', 'request', 'response'],
+  };
+  const C_SERVICES = {
+    $id: './C_SERVICES.json#',
+    enum: [],
+  };
+  for (const file of files) {
+    const service = toPascalCase(file.replace('.json', ''));
+    const schema = _load(file);
+    const definitions = schema.definitions || {};
+    C_SERVICES.enum.push(service);
+    Object.entries(definitions).forEach(([method, definition]) => {
+      let ref = definition.properties.service['$ref'];
+      ref = ref.replace('./', `${baseUrl}/`);
+      definition.properties.service['$ref'] = ref;
+      base.oneOf.push({
+        $ref: `${baseUrl}/services/${file}#/definitions/${method}`,
+      });
+    });
+    fs.writeFileSync(
+      `./configs/schema/services/${file}`,
+      JSON.stringify(schema, null, 2),
+    );
+  }
+  fs.writeFileSync(
+    `./configs/schema/base.json`,
+    JSON.stringify(base, null, 2),
+  );
+  fs.writeFileSync(
+    `./configs/schema/defs/C_SERVICES.json`,
+    JSON.stringify(C_SERVICES, null, 2),
+  );
 }
 
 function generateTsTypes(files) {

@@ -1,0 +1,26 @@
+{
+  "$id": "./base.json#",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "https://c-service-pdkc2.s3.ap-southeast-1.amazonaws.com/ZfxYrRxQqcKu/schema/services/bot.json#/definitions/GetAvailableBots"
+    },
+    {
+      "$ref": "https://c-service-pdkc2.s3.ap-southeast-1.amazonaws.com/ZfxYrRxQqcKu/schema/services/sso.json#/definitions/RegisterNewUser"
+    },
+    {
+      "$ref": "https://c-service-pdkc2.s3.ap-southeast-1.amazonaws.com/ZfxYrRxQqcKu/schema/services/sso.json#/definitions/LoginByEmail"
+    },
+    {
+      "$ref": "https://c-service-pdkc2.s3.ap-southeast-1.amazonaws.com/ZfxYrRxQqcKu/schema/services/user.json#/definitions/GetProfile"
+    },
+    {
+      "$ref": "https://c-service-pdkc2.s3.ap-southeast-1.amazonaws.com/ZfxYrRxQqcKu/schema/services/user.json#/definitions/ChangePassword"
+    }
+  ],
+  "required": [
+    "service",
+    "request",
+    "response"
+  ]
+}
